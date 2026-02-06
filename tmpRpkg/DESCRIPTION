@@ -1,0 +1,17 @@
+Package: tmpRpkg
+Title: temporary R package for data analysis
+Version: 0.0.0.9000
+Authors@R: 
+    person("Songpeng", "Zu", , "zsp07@tsinghua.org.cn",
+    role = c("aut", "cre"),
+    comment = c(ORCID = "https://orcid.org/0000-0001-9753-5623"))
+Description: global meta and functions for pairedtag analysis
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends: R (>= 4.3)
+Imports: 
+    data.table,
+    devtools,
+    hdf5r

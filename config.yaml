@@ -1,0 +1,12 @@
+disk:
+  "/tscc/projects/ps-renlab2/szu/projects"
+project:
+  "amb_pairedtag"
+pt_scmeta_path:
+  "meta/pairedtag.cell.meta.all.240626.csv"
+pt_scDNAbam_path:
+  "02.track/out/cell_bams"
+pt_scRNAbam_path:
+  "02.track/out_RNA/cell_bams"
+
+  

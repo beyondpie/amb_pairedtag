@@ -1,0 +1,120 @@
+* Use R
+** Use =:::= to access all the names in a package, even internal
+   - See details from this [[https://www.tidyverse.org/blog/2022/09/playing-on-the-same-team-as-your-dependecy/][reference]]
+** Use conda to control the virtual enviroment in R.
+
+   Conda is widely used to control vitural enviroment in Python. But
+   it's actually a general package management and vitural enviroment
+   tool. It works in R, though seems to be a little slow when
+   configuring the R related dependencies.
+
+   - Add R related conda channels
+#+BEGIN_SRC R
+  ## Like a stack, the channels will be search in order of conda-forge,
+  ## biconda, then defaults.
+  conda config --add channels defaults
+  conda config --add channels bioconda
+  ## conda-forge is maintained by the community, and packages from
+  ## it can be treated as high-quality ones.
+  conda config --add channels conda-forge
+#+END_SRC
+
+   - Create a virtual enviorment in R
+     =conda create -n name_of_env r-base r-essentials=
+
+   - Most of the popular packages can be installed directly by conda
+     [RECOMMEND]. But we can use R to install packages. Just to know
+     that, R will search the packages with R installed or some where
+     you define with =R_LIBS_USER= then the conda's.
+     
+   - [IMPORTANT]: a package installed by conda should not be updated in R.
+
+   - REF: the [[https://community.rstudio.com/t/why-not-r-via-conda/9438][document]] helps me a lot.
+
+** Use the package "_import_" by Rstudio as a module system in R.
+A module system is to help us to control our namespace. It helps us to
+name the variables easilily without mixing them from other
+libariries. More importantly, it makes the code much easier to
+read. 
+   
+** Writing R packages
+It's easy to write R packages. The book [[https://adv-r.hadley.nz][R Packages]] by Hdley Wickham is
+the only book in need. It's short and provides lots of practical
+tools. Chapter 2 is enough to start to write a package, and then read
+other chapters when necessary.
+
+- [[https://github.com/r-lib/devtools][devtools]] is the tool I use to organize R packages. One important
+  function is =devtools::load_all()=, which is key to debug our
+  packages. See Chapter 5 in the book above.
+
+** Debug R
+- When you have errors, use =traceback()= to view more information
+  about them.
+- Add =print= related sentences, which is common and easy to
+  use. Simple logs help a lot
+- =debug([your_function])=. I use this a lot since we can go to the
+  details of how the commands run by investigating each command, and
+  the current generated/updated variables in the debugging
+  envioroment. This is provided by R, and much like =pdb= in Python or
+  =gdb= in C/C++. See [[https://adv-r.hadley.nz/debugging.html][Chapter 22 Debugging]] in  [[https://adv-r.hadley.nz][Advanced R]] by Hadley
+  Wickham for the details.
+
+** Tips
+   - Use LESS =library= to load packages, instead use =package::function=
+     to declare explictly which function in use.
+     - =library= will load the package, but make our current global
+       enviroment dirty with the names from that package. See
+       [[https://adv-r.hadley.nz/environments.html#special-environments][Special Env]] for more details.
+       
+   - When use =install.packages=, sometimes I face =ERROR: failed to
+     create lock directory= problem. We can use
+     =install.packages("[packagenm]", dependencies=TRUE, INSTALL_ops =
+     '--no-lock')=. See [[https://stackoverflow.com/questions/14382209/r-install-packages-returns-failed-to-create-lock-directory][ref]] for more details.
+   - Use =dependencies=TRUE= to install packages if facing some
+     depencies erros.
+
+** Other packages
+- [[https://github.com/trevorld/r-argparse][r-argparse]] or [[https://github.com/trevorld/r-optparse][r-optparse]]
+  - Just like Python argparse library, which is used to add diverse
+    arguments for a R script. Commenly used when the R script needs
+    extra parameters/arguments.
+
+- [[https://github.com/rticulate/import/][import]]
+  - Like Python import mechanism, this packages allows us to load
+    specific R function from a package or a script. Currently, I use
+    =::= or =box= package more often than this.
+- [[https://github.com/r-lib/here/][here]]
+  - It is used to locate the project root path. It's a good habit to
+    use it in R scripts since we don't need to specify the 
+    workspace directory specifically. This increases the robust of our
+    codes. Another similar package named [[https://github.com/r-lib/rprojroot/][rprojroot]].
+
+- [[https://github.com/rstudio/renv/][renv]]
+  - Create reproducible environment for each project by creating an
+    independent programming environment like conda.
+
+- [[https://github.com/r-lib/withr/][withr]]
+  - Allow us to temporarily change the global states.
+  
+** Materials
+- [[https://adv-r.hadley.nz][Advanced R]] by Hadley Wickham.
+  - It's free and updated online. This book is written very well, and
+    covers lots of important and advanced topics in R. I learn a lot
+    about the concept of R enviroments and the object-oriented
+    programming, like S3, S4, and R6.
+    
+- [[https://adv-r.hadley.nz][R Packages]] by Hadley Wickham.
+  - It's free and updated online. This is the one for writing R packages.
+
+- [[https://www.stat.auckland.ac.nz/~paul/RG2e/][R Graphics]] by Paul Murrell
+  - This book introcudes in deep the graphic system in R, inlcuding one of the
+    base system named =grid=, which both =ggplot2= and =lattice= are
+    build upon and another base system used by default R plot.
+
+- [[https://ggplot2-book.org][ggplot2]] by Hadley Wickham
+  - This book introduces how to use ggplot2 in depth, such as the
+    major components in ggplot2 and how to hack it.
+
+** Resources
+   - [[https://bookdown.org][bookdown website]]: lots of high-quality books about R there. More
+     importantly, they are free and public.

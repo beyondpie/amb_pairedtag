@@ -1,0 +1,23 @@
+I did below procedures to calculate doublet rate in Exp1-13
+
+Zhaoning Wang
+
+20240214
+
+1. I used doublet.analysis.R to summarize mouse barcodes, human barcodes and human-mouse shared barcodes.
+
+2. I then counted the sum of mouse barcodes (#mouseBC), human barcodes(#humanBC) and human-mouse shared barcodes(#mixBC) associated with first round barcodes, where I experimentally spiked in Hela cells, as in mm10_hg38_doublet_20240213.xlsx.
+
+3. In excel, I did below calculation:
+
+    %mouseBC = #mouseBC/(#mouseBC + #humanBC)
+
+    %humanBC = 1-%mouseBC
+
+    %divisorFactor = 2 * %mouseBC * %humanBC
+
+    %mixBC = #mixBC/(#mouseBC + #humanBC - #mixBC)
+
+    %actualDoublet = %mixBC/%divisorFactor
+
+The results are also shown in mm10_hg38_doublet_20240213.xlsx.

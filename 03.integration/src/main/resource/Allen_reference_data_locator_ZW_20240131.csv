@@ -1,0 +1,10 @@
+﻿Paired-Tag Brain Regions,Full Name,Allen Anatomy,Allen 10x v2 (/projects/ps-renlab2/zhw063/99.MouseBrainPairedTag/allen_brain_atlas),Allen 10x v3 (/projects/ps-renlab2/szu/projects/amb_pairedtag/data/allen)
+CPU,Caudate Putamen,STRd,NA,allen_10xv3_STR_STRd.h5ad
+HYP,Hypothalamus,HY,HY_LZ_data_allen10xv2.h5ad; HY_MEZ_PVZ_PVR_data_allen10xv2.h5ad,allen_10xv3_HY_HYa1.h5ad; allen_10xv3_HY_HYa2.h5ad; allen_10xv3_HY_HYm2.h5ad; allen_10xv3_HY_HYml.h5ad; allen_10xv3_HY_HYmm.h5ad; allen_10xv3_HY_HYpl.h5ad; allen_10xv3_HY_HYpm.h5ad; allen_10xv3_HY_LZ.h5ad; allen_10xv3_HY__MEZ-PVZ-PVR.h5ad
+HCa,Hippocampus-anterior,HIP,HIP_data_allen10xv2.h5ad,allen_10xv3_HIP_CA.h5ad; allen_10xv3_HIP.h5ad
+HCp,Hippocampus-posterior,HIP,HIP_data_allen10xv2.h5ad,allen_10xv3_HIP_CA.h5ad; allen_10xv3_HIP.h5ad
+ENT,Entorhinal Cortex,ENT,ENT_data_allen10xv2.h5ad,allen_10xv3_ENT.h5ad
+AMY,Amygdala,STR - sAMY,NA,allen_10xv3_STR_sAMY.h5ad
+NAC,Nucleus Accumbens,STRv,NA,allen_10xv3_STR_STRv.h5ad
+VTA_SnR,Ventral Tegmental Area + Substantia Nigra,MB-VTA_SN,NA,allen_10xv3_MB_VTA-SN.h5ad
+PFC,Prefrontal Cortex,ACA; PL-ILA-ORB,ACA_data_allen10xv2.h5ad; PL_ILA_ORB_data_allen10xv2.h5ad,allen_10xv3_ACA.h5ad; allen_10xv3_PL-ILA-ORB.h5ad

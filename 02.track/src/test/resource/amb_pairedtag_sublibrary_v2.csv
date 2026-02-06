@@ -1,0 +1,2 @@
+exp,sublibraryid,path,DNA,RNA,name,DNA_bam
+exp1,A01,/projects/ps-renlab/zhw063/renlab2/99.MouseBrainPairedTag/01.MouseBrainExp1/03.novaseq_20230307,ZW347,ZW377,MouseBrainExp1_DNA25,/projects/ps-renlab2/szu/projects/amb_pairedtag/02.track/src/test/resource/ZW347_mm10_sorted_rmdup.bam

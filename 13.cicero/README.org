@@ -1,0 +1,14 @@
+* Using cicero to find the co-accessible cis-regulatory element pairs.
+
+** Installation
+  1. Use mamba/conda to install the neccessary R packages that are hard to install in R itself.
+     - =mamba install conda-forge::r-sf=
+     - =mamba install conda-forge::r-spdef=
+     - =mamba install conda-forge::r-units=
+  2. Prepare BiocManager and devtools if haven't been installed in R.
+     - =if (!requireNamespace("BiocManager", quietly = TRUE)) {install.packages("BiocManager")}=
+     - =install.packages("devtools")=
+  3. Then in R, use devtools to install ~monocle3~ and ~cicero~:
+     - i. =BiocManager::install(c("Gviz", "GenomicRanges", "rtracklayer"))=
+          If having difficulties to install them, try =mamba install= like above.
+     - ii. =devtools::install_github("cole-trapnell-lab/cicero-release", ref = "monocle3")=

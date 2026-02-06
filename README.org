@@ -1,0 +1,57 @@
+* PairedTag Data Analysis for Adult Mouse Brain
+
+** Data preprocess and alignment from Johnny
+  - https://github.com/zwang0715/Paired-Tag
+
+** Download codes
+   1. =git clone https://github.com/beyondpie/amb_pairedtag [local_directory]=
+   2. =cd [local_directory]= and =git submodule update --init --recursive=
+      - We have one submodule named =extratools= in the repo, so use this command to pull those codes.
+** genome annotations
+   1. We use mm10 / GRCm38 for alignment.
+   2. We mainly use GRCm38.p6-M25 gene annotations from https://www.gencodegenes.org/mouse/release_M25.html.
+   3. Promoters are usually followed the definition of up/down stream 1kb of TSSs.
+
+* Code organization
+** tmpRpkg
+   One temporary R package named tmpRpkg right under the
+   project to enable global sharing of common variables and functions.
+   - I follow the [[https://r-pkgs.org/whole-game.html#use_package][R package book]] to manage the package.
+      - run =devtools::document()= to update the export NAMESPACE
+      - run =devtools::load_all()= to fast update the package for use. If
+        failed, try run =unload("tmpRpkg")= firstly.
+      - run =devtools::install()= can install the package immediately.
+   - =detach("package:tmpRpkg", unload=TRUE)= and then =library(tmpRpkg)= to
+     reload the updated/re-installed package.
+** tmpPypkg
+   One temporary Python package named tmpPypkg.
+   1. Update PYTHONPATH
+      #+BEGIN_SRC bash
+       export PYTHONPATH="/your_local_dir/amb_pairedtag:${PYTHONPATH}"
+      #+END_SRC
+   2. Then =import tmpPypkg= in Python.
+** Scala
+   1. Set up env.
+      - Use conda/mamba to install java. Here we use Java version 22.0.1 (>= 22 should be OK.)
+        =mamba install conda-forge::openjdk=22.0.1=
+      - Then use couriser to manage scala's tools, like sbt (project manager), scala and so on.
+        Check the installation details here: https://get-coursier.io/docs/cli-installation
+   2. Compile the project
+      - Under the project root, we can use sbt interactive way to compile the project.
+        =sbt= then =compile=
+      - Under the project root, we can also run =sbt compile= in terminal.
+      - [Optional] Assemble: use =sbt assembly= to assemble the scala codes into target directory.
+      - For now, I put bioscala and project-related scala files under src/main/scala. And for each subtask,
+        like CallPeak, DataPreprocess and so on, I put them into the correponding subdirectories.
+        =projects= can show all the project we have, and =project [some subproject]= can change the default project
+        to the one we want.
+   3. Run
+      - Under the interactive =sbt=, use =run= to run multiple main functions, it will output the multiple
+        main functions you can run, and then you can insert the number to run the specific one.
+      - =console= can provide the scala REPL
+      - If you assemble the projects, you can then =java -cp target/scala-verion/version.jar someMain someArgs=
+        to run some particular functions.
+
+
+
+

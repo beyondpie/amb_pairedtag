@@ -1,0 +1,112 @@
+import os._
+import scala.collection.parallel._
+import scala.collection.parallel.CollectionConverters.*
+import Peak.{Peak, Peaks}
+import GRange.{GenomicRange, filterByRanges}
+import SZUtils.{readTable, writeStrings2File}
+import MetaData.TSCCMeta
+import MetaData.GenomeMeta.mm10fafnm
+import MetaData.GenomeMeta.mm10BlacklistBed
+import MergePeak.{GenomeFilter, BlacklistFilter}
+import MergePeak.readReproPeak
+import SZUtils.mergeListOfMap
+import MergePeak.BedToolMerge2
+import SZUtils.writeMap2File
+
+object RunMergePeak2 {
+  def main(args: Array[String]) = {
+    val chromOrd: List[String] = GenomicRange.chromOrd
+    val mods = TSCCMeta.modality
+    val m2pc = TSCCMeta.mod2peakClass
+    val sexes = ("Male", "Female")
+    val blFilter = BlacklistFilter(bedfnm = mm10BlacklistBed)
+
+    val genomeFilter = GenomeFilter(fanm = mm10fafnm)
+
+    val projd = TSCCMeta.projd
+    val workd = s"${projd}/04.peakcalling"
+    val outModPeak: String = s"${workd}/out/mergePeak"
+    val outGroupOfModPeak: String = s"${workd}/out/mergePeakPerGroup"
+
+    // reproducible peak directory
+    val rpd = s"${workd}/out/reproPeak_nolambda"
+    val groups =
+      os.list(os.Path(rpd))
+        .map(x => x.toString.split("/").last)
+        .map(x => x.replace(".reproPeak", ""))
+
+    val mod2group: Map[String, List[(String, String)]] =
+      groups
+        .map(x => x.split("-"))
+        .groupBy(_(1))
+        .map((k, v) => (k, v.toList.map(x => (x(2), x(0)))))
+
+    val group2rp: Map[String, Map[String, Peaks]] =
+      groups.par
+        .map(g => {
+          val peaks = readReproPeak(s"${rpd}/${g}.reproPeak")
+          val p_gf = genomeFilter.filter(peaks)
+          val p_bl = blFilter.filter(p_gf)
+          val ffp =
+            // X-inactiation
+            if (
+              (g.contains("H3K9me3") || g.contains("h3K27me3")) & g
+                .contains("Female")
+            ) {
+              p_bl.filter(x => x.r.chrom != "chrX")
+            } else {
+              p_bl
+            }
+          val mffp = ffp
+            .groupBy(_.r.chrom)
+            .map((k, v) => (k, v.sortBy(x => (x.r.startFrom, x.r.endTo))))
+
+          (g, mffp)
+        })
+        .toList
+        .toMap
+
+    val mod2ListOfPeaks: Map[String, List[Map[String, Peaks]]] =
+      mod2group
+        .map((k, v) => (k, v.map(x => group2rp(s"${x._2}-$k-${x._1}"))))
+
+    val mod2srtMapPeaks: Map[String, Map[String, Peaks]] =
+      mod2ListOfPeaks.map(
+        (k, v) => (k,
+          mergeListOfMap(v, chromOrd)
+            .par
+            .map((k, v) => (k, v.sortBy(x => (x.r.startFrom, x.r.endTo))))
+            .toList
+            .toMap
+        )
+      )
+    val mod2mergeMapPeaks: Map[String, Map[String, Peaks]] =
+      mod2srtMapPeaks.par.map(
+        (k, v) => {
+          println(s"start mergePeaks on ${k} ...")
+          var r = (k, BedToolMerge2.merge2(v))
+          println(s"end of mergePeaks on ${k}.")
+          r
+        }
+      )
+        .toList
+        .toMap
+
+    mod2mergeMapPeaks.foreach{
+        (mod, v) => {
+          println(s"Now output the resutls of merge peaks for: ${mod}...")
+          val vv = v.map(
+            (chrom, peaks) => (chrom, peaks.map(p => p.mkString("\t"))))
+          writeMap2File(
+            vv,
+            out = os.Path(outModPeak) /
+              s"${mod}.merged.all.blv2.me.peak",
+            ordedKeys = chromOrd,
+            head = Peak.heads.mkString("\t")
+          )
+          println(s"Finish output the resutls of merge peaks for: ${mod}.")
+        }
+      }
+
+  }
+}

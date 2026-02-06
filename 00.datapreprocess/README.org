@@ -1,0 +1,24 @@
+* DNA/RNA fastq process
+  1. =/home/y2xie/Paired-Tag-master/reachtools/reachtools ${combine} ${fastq_dir}/${s}=
+    This is to combine R1 and R2 fastq files into combined fastq.
+  2. =zcat ${fastq_dir}/${s}_combined.fq.gz | bowtie ${PT} - --norc -m 1 -v 1 -S ${fastq_dir}/${s}_BC.sam=
+    Here BC means barcode. In this step, we map R1 (or R2?) to the barcode cookbook.
+  3. =/home/y2xie/Paired-Tag-master/reachtools/reachtools convert2 ${fastq_dir}/${s}_BC.sam)=
+    At this step, we replace the barcode sequences with the short
+    names, and _BC_cov_fastq.gz will be genreated. Here cov means
+    convert.
+  4. =trim_galore ${fastq_dir}/${salll}_BC_cov.fq.gz -o ${trim_dir}=
+    trim_galore is a famous softwere to trim the Illumina P5 or P7
+    adaptor. In RNA fastq processing, we also trim the primers used
+    in reverse transcription process.
+    #+BEGIN_SRC bash
+
+      trim_galore ${fastq_dir}/${salll}_BC_cov.fq.gz -o ${trim_dir}
+      ### trim oligo-dT primer
+      trim_galore -a AAAAAAAAAAAAAAAACCTGCAGGNNNNACGAATGCTCTGGCCTNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN \
+                  ${trim_dir}/${salll}_BC_cov_trimmed.fq.gz -o ${trim_dir}
+      ### ## trim N6 primer  
+      trim_galore -a CCTGCAGGNNNNACGAATGCTCTGGCCTNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN \
+                  ${trim_dir}/${salll}_BC_cov_trimmed_trimmed.fq.gz -o ${trim_dir}
+    #+END_SRC
+  5. We then use =bowtie2= or =STAR= for DNA or RNA alignments.

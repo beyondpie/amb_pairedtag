@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#PBS -q hotel
+#PBS -N phastCons
+#PBS -l nodes=1:ppn=2,walltime=12:00:00
+#PBS -V
+#PBS -M debug.pie@gmail.com
+#PBS -m a
+#PBS -A ren-group
+#PBS -j oe
+
+source activate snATAC2
+
+path1="/oasis/tscc/scratch/szu/projects/CEMBA2/07.peakcalling"
+peakFile=${path1}/mba.whole.union.peaks.nospm.bed
+phastConsDir="/projects/ps-renlab/yangli/genome/mm10/mm10.60way.phastCons"
+phastConsbw=${phastConsDir}/mm10.60way.phastCons.bw
+
+computeMatrix scale-regions --regionsFileName ${peakFile} ${path1}/mba.whole.shuffle.removeovlp.bed\
+              --scoreFileName ${phastConsbw}  -p max\
+              --regionBodyLength 500\
+              --startLabel peak_start\
+              --endLabel peak_end\
+              --missingDataAsZero\
+              --outFileName mba.whole.phastCons.cleanshuffle.mat.gz \
+              --outFileSortedRegions mba.whole.phastCons.cleanshuffle.sort.region
+              
+echo "Finish computeMatrix"
+
+plotProfile -m mba.whole.phastCons.cleanshuffle.mat.gz \
+            -out mba.whole.phastCons.cleanshuffle.profile.svg \
+            --plotType=lines\
+            --colors red blue \
+            --startLabel "Peak Start" \
+            --endLabel "Peak End" \
+            --plotTitle "Sequence convervation measured by PhastCons score" \
+            --legendLocation best
+            
+plotHeatmap -m mba.whole.phastCons.cleanshuffle.mat.gz  \
+            -out mba.whole.phastCons.cleanshuffle.heatmap.svg \
+            --whatToShow 'heatmap and colorbar' \
+            --colorMap RdBu \
+            --startLabel "Peak Start" \
+            --endLabel "Peak End" \
+            --plotTitle "Heatmap of sequence convervation measured by PhastCons score"
+
+echo "Finish plotHeatmap"
+
+
+

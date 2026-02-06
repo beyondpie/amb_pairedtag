@@ -1,0 +1,1 @@
+This folder contains pass-QC filtering mouse and human barcodes.

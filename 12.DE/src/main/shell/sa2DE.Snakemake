@@ -1,0 +1,65 @@
+## Failed jobs:
+## - 007_L2_3_IT_CTX_Glut
+## - 009_L2_3_IT_PIR_ENTl_Glut
+
+envvars:
+    "PATH"
+
+import os
+import pyprojroot
+import pandas as pd
+
+python = "/tscc/nfs/home/szu/miniforge3/envs/sa2/bin/python"
+
+projd = str(pyprojroot.here())
+workd = os.path.join(projd, "12.DE")
+logd = os.path.join(workd, "log")
+flagd = os.path.join(workd, "flagd")
+outd = os.path.join(workd, "out", "ATAC_sa2LRT_DE")
+
+## get all the subclasses
+scmeta = pd.read_csv(os.path.join(projd, "meta", "snATAC.subclass2cnt.csv"),
+                     sep = ",", header = 0)
+scs = [i for i in scmeta.subclass]
+## for test
+## scs = [scs[0]]
+
+sa2fnm = os.path.join(projd, "data",
+                      "snATAC", "all.sa2v26.pmat.snATAC.nofrag.h5ad")
+DE_script = os.path.join(workd, "src/main/python", "02.runSnapATAC2DE.py")
+ 
+# main
+rule all:
+   input:
+      expand("{f}/{sc}_ATAC_sa2DE.done", f = flagd, sc = scs)
+
+rule sa2DE:
+    input:
+       sa2fnm = sa2fnm
+    output:
+       outfnm = f"{outd}/{{sc}}_ATAC_sa2DE.tsv",
+       tag = touch(f"{flagd}/{{sc}}_ATAC_sa2DE.done")
+    log:
+       f"{logd}/{{sc}}_ATAC_sa2DE.log"
+    threads: 15
+    resources:
+       walltime = "72:00:00",
+       mem = "250G", 
+       queue = "condo",
+       mail = "ae",
+       email = "debug.pie@gmail.com",
+       slurm="qos=condo account=csd788 nodes=1"
+    conda: "sa2"
+    shell:
+       """
+       {python} {DE_script} --annfnm {input} \
+         --g1 {wildcards.sc} \
+         --groupby subclass \
+         --minpct 0.005 \
+         --minlog2fc 0.1 \
+         --dsfold 5 \
+         --outfnm {output.outfnm}
+       """
+       
+       
+       
